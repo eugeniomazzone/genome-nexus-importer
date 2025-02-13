@@ -54,10 +54,14 @@ The python dependencies can be installed from the file `requirements.txt`:
 ```bash
 cd scripts
 pip install -r requirements.txt
+pip install --no-binary cyvcf2 --no-cache-dir cyvcf2
 ```
 For R there is only the dependency on the biomaRt library.
 ```bash
-R -e "source('https://bioconductor.org/biocLite.R'); biocLite('biomaRt')"
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("biomaRt")
 ```
 
 #### Updating versions

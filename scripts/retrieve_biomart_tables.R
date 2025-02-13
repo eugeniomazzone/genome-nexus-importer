@@ -6,7 +6,7 @@
 library(biomaRt)
 
 args = commandArgs(trailingOnly=TRUE)
-
+args = c('canis_lupus_familiaris', 'cfa_ensembl104/input/', 'cfa')
 # set working dir to the correct genome/version input dir
 species <- args[1]
 path <- args[2]
@@ -14,14 +14,16 @@ genome_build <- args[3]
 
 if (genome_build == "grch37") {
   host_url = "https://grch37.ensembl.org"
-} else {
+} else if (genome_build == "cfa"){
+  host_url = "https://may2021.archive.ensembl.org"
+}else {
   host_url = "https://www.ensembl.org"
 }
 
-stopifnot(species %in% c('homo_sapiens', 'mus_musculus'))
+stopifnot(species %in% c('homo_sapiens', 'mus_musculus', 'canis_lupus_familiaris'))
 
 # set species to short name for biomart
-species <- ifelse(species=='homo_sapiens', 'hsapiens', 'mmusculus')
+species <- ifelse(species=='homo_sapiens', 'hsapiens', ifelse(species=='mus_musculus', 'mmusculus', 'clfamiliaris'))
 
 # select mart
 # listEnsembl()
@@ -39,8 +41,25 @@ if (species=='mmusculus') attributes[3:4] <- c('mgi_symbol', 'mgi_id')
 genes <- getBM(attributes=attributes, mart=ensembl)
 pfam <- getBM(attributes=c('ensembl_gene_id', 'ensembl_transcript_id', 'external_gene_name', 'pfam', 'pfam_start', 'pfam_end'), mart=ensembl)
 refseq <- getBM(attributes=c('ensembl_transcript_id', 'refseq_mrna'), mart=ensembl)
-ccds <- getBM(attributes=c('ensembl_transcript_id', 'ccds'), mart=ensembl)
 
+if (species=='clfamiliaris'){
+  gene_ids <- getBM(attributes = c("ensembl_transcript_id"), mart = ensembl)
+  ccds <- data.frame()
+  step <-1000
+  i <- 1
+  while (i < nrow(gene_ids)){
+    ccds2 <- getBM(attributes=c('ensembl_transcript_id', 'coding'),
+    filters = "ensembl_transcript_id", 
+    values = gene_ids[i:(i+step),], 
+    mart=ensembl)
+    i <- i + step +1
+    ccds <- rbind(ccds, ccds2)
+    print(dim(ccds))
+    Sys.sleep(1)
+    }
+}else {
+  ccds <- getBM(attributes=c('ensembl_transcript_id', 'ccds'), mart=ensembl)
+}
 write.table(pfam, paste0(path, '/ensembl_biomart_pfam.txt'), na='', sep='\t', quote=FALSE, row.names=FALSE, 
   col.names=c('Gene stable ID', 'Transcript stable ID', 'Gene name', 'Pfam domain ID', 'Pfam domain start', 'Pfam domain end'))
 write.table(genes, paste0(path, '/ensembl_biomart_geneids.txt'), na='', sep='\t', quote=FALSE,  row.names=FALSE, 
