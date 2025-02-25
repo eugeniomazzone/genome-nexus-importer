@@ -43,20 +43,12 @@ pfam <- getBM(attributes=c('ensembl_gene_id', 'ensembl_transcript_id', 'external
 refseq <- getBM(attributes=c('ensembl_transcript_id', 'refseq_mrna'), mart=ensembl)
 
 if (species=='clfamiliaris'){
-  gene_ids <- getBM(attributes = c("ensembl_transcript_id"), mart = ensembl)
-  ccds <- data.frame()
-  step <-1000
-  i <- 1
-  while (i < nrow(gene_ids)){
-    ccds2 <- getBM(attributes=c('ensembl_transcript_id', 'coding'),
-    filters = "ensembl_transcript_id", 
-    values = gene_ids[i:(i+step),], 
-    mart=ensembl)
-    i <- i + step +1
-    ccds <- rbind(ccds, ccds2)
-    print(dim(ccds))
-    Sys.sleep(1)
-    }
+  gene_ids <- getBM(attributes = c("ensembl_transcript_id", "hsapiens_homolog_ensembl_gene"), mart = ensembl)
+  ensembl <- useMart(biomart='ensembl', host=host_url, dataset=paste0('hsapiens', '_gene_ensembl'))
+  homo_ids <- getBM(attributes = c("ensembl_gene_id","ccds"), mart = ensembl)
+  colnames(homo_ids)[1] <- 'hsapiens_homolog_ensembl_gene'
+  ccds <- merge(x = gene_ids, y = homo_ids, by = "hsapiens_homolog_ensembl_gene", all.x = TRUE)
+  ccds <- ccds[c(2,3)]
 }else {
   ccds <- getBM(attributes=c('ensembl_transcript_id', 'ccds'), mart=ensembl)
 }
