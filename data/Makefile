@@ -182,7 +182,7 @@ $(TMP_DIR)/ensembl_biomart_canonical_transcripts_per_mgi.txt: $(TMP_DIR)/ensembl
 
 uniprot_mapping: $(VERSION)/export/ensembl_biomart_transcripts.json.gz uniprot/input/Homo_sapiens.$(GENOME_BUILD).pep.all.fa.gz uniprot/input/uniprot_reviewed.fasta.gz
 	python ../scripts/enst_to_uniprot_mapping.py <(gunzip -c $(word 1, $^)) <(gunzip -c $(word 2, $^)) <(gunzip -c $(word 3, $^)) $(VERSION)
-uniprot_mapping2: $(VERSION)/export/ensembl_biomart_transcripts.json.gz uniprot/input/Canis_lupus_familiaris.$(GENOME_BUILD).pep.all.fa.gz uniprot/input/uniprot_reviewed.fasta.gz
+uniprot_mapping2: $(VERSION)/export/ensembl_biomart_transcripts_dog.json.gz uniprot/input/Canis_lupus_familiaris.$(GENOME_BUILD).pep.all.fa.gz uniprot/input/uniprot_Canis_lupus_familiaris.fasta.gz
 	python ../scripts/enst_to_uniprot_mapping.py <(gunzip -c $(word 1, $^)) <(gunzip -c $(word 2, $^)) <(gunzip -c $(word 3, $^)) $(VERSION)
 # vcf2maf canonical transcripts
 common_input/isoform_overrides_uniprot.txt:

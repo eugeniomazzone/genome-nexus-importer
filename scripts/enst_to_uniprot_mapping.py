@@ -164,6 +164,8 @@ def main(ensembl_biomart_transcripts, ensembl_fasta, uniprot_sequence_with_isofo
     transcript = open(ensembl_biomart_transcripts)
     if 'grch37' in genome_build_version.lower():
         genome_build = 'grch37'
+    elif 'cfa' in genome_build_version.lower():
+         genome_build = 'cfa'
     else:
         genome_build = 'grch38'
     # get result dataframe from transcript json file
