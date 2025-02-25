@@ -166,6 +166,8 @@ $(TMP_DIR)/ensembl_biomart_transcripts.json.gz: $(TMP_DIR)/ensembl_biomart_trans
 $(TMP_DIR)/ensembl_biomart_transcripts_mouse.json.gz: $(TMP_DIR)/ensembl_biomart_transcripts.txt $(TMP_DIR)/ensembl_transcript_info.txt $(VERSION)/input/ensembl_biomart_pfam.txt $(VERSION)/input/ensembl_biomart_refseq.txt $(VERSION)/input/ensembl_biomart_ccds.txt
 	python ../scripts/build_transcript_json_mouse.py $^ $@
 
+$(TMP_DIR)/ensembl_biomart_transcripts_dog.json.gz: $(TMP_DIR)/ensembl_biomart_transcripts.txt $(TMP_DIR)/ensembl_transcript_info.txt $(VERSION)/input/ensembl_biomart_pfam.txt $(VERSION)/input/ensembl_biomart_refseq.txt $(VERSION)/input/ensembl_biomart_ccds.txt
+	python ../scripts/build_transcript_json_dog.py $^ $@
 # give default/canonical geneid/transcript based on given hugo symbol takes
 # about 50m to run (TODO: this can be easily optimized)
 # isoform_overrides_genome_nexus.txt is made for genome nexus, others files are generated for vcf2maf
@@ -179,6 +181,8 @@ $(TMP_DIR)/ensembl_biomart_canonical_transcripts_per_mgi.txt: $(TMP_DIR)/ensembl
 	python ../scripts/make_canonical_transcript_mouse.py $^ $@
 
 uniprot_mapping: $(VERSION)/export/ensembl_biomart_transcripts.json.gz uniprot/input/Homo_sapiens.$(GENOME_BUILD).pep.all.fa.gz uniprot/input/uniprot_reviewed.fasta.gz
+	python ../scripts/enst_to_uniprot_mapping.py <(gunzip -c $(word 1, $^)) <(gunzip -c $(word 2, $^)) <(gunzip -c $(word 3, $^)) $(VERSION)
+uniprot_mapping2: $(VERSION)/export/ensembl_biomart_transcripts.json.gz uniprot/input/Canis_lupus_familiaris.$(GENOME_BUILD).pep.all.fa.gz uniprot/input/uniprot_reviewed.fasta.gz
 	python ../scripts/enst_to_uniprot_mapping.py <(gunzip -c $(word 1, $^)) <(gunzip -c $(word 2, $^)) <(gunzip -c $(word 3, $^)) $(VERSION)
 # vcf2maf canonical transcripts
 common_input/isoform_overrides_uniprot.txt:
@@ -262,7 +266,7 @@ mouse: input dirs $(TMP_DIR)/ensembl_biomart_canonical_transcripts_per_mgi.txt $
 .PHONY: all mouse
 
 # For dog various steps of this Makefile are not applicable. Therefore this is a dog specific recipe.
-dog: input dirs $(TMP_DIR)/ensembl_biomart_canonical_transcripts_per_hgnc.txt $(TMP_DIR)/ensembl_biomart_transcripts.json.gz common_input/pfamA.txt common_input/hotspots_v2_and_3d.txt
-	cp $(TMP_DIR)/ensembl_biomart_canonical_transcripts_per_hgnc.txt $(TMP_DIR)/ensembl_biomart_transcripts.json.gz common_input/pfamA.txt common_input/hotspots_v2_and_3d.txt common_input/oncokb_cancer_genes_list_from_API.json $(VERSION)/export/
+dog: input dirs $(TMP_DIR)/ensembl_biomart_canonical_transcripts_per_hgnc.txt $(TMP_DIR)/ensembl_biomart_transcripts_dog.json.gz common_input/pfamA.txt common_input/hotspots_v2_and_3d.txt 
+	cp $(TMP_DIR)/ensembl_biomart_canonical_transcripts_per_hgnc.txt $(TMP_DIR)/ensembl_biomart_transcripts_dog.json.gz common_input/pfamA.txt common_input/hotspots_v2_and_3d.txt common_input/oncokb_cancer_genes_list_from_API.json $(VERSION)/export/
 
 .PHONY: all dog
