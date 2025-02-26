@@ -3,9 +3,9 @@ ARG MONGODBVERSION=4.0.12
 FROM bitnami/mongodb:${MONGODBVERSION}
 
 # Define build arguments
-ARG ARG_REF_ENSEMBL_VERSION
+ARG ARG_REF_ENSEMBL_VERSION=cfa_ensembl104
 ENV REF_ENSEMBL_VERSION=${ARG_REF_ENSEMBL_VERSION}
-ARG SPECIES=homo_sapiens
+ARG SPECIES=canis_lupus_familiaris
 ENV SPECIES=${SPECIES}
 
 # Define additional annotation resources arguments
