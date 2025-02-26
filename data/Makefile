@@ -265,6 +265,6 @@ mouse: input dirs $(TMP_DIR)/ensembl_biomart_canonical_transcripts_per_mgi.txt $
 
 # For dog various steps of this Makefile are not applicable. Therefore this is a dog specific recipe.
 dog: input dirs $(TMP_DIR)/ensembl_biomart_canonical_transcripts_per_hgnc.txt $(TMP_DIR)/ensembl_biomart_transcripts_dog.json.gz common_input/pfamA.txt common_input/hotspots_v2_and_3d.txt 
-	cp $(TMP_DIR)/ensembl_biomart_canonical_transcripts_per_hgnc.txt $(TMP_DIR)/ensembl_biomart_transcripts_dog.json.gz common_input/pfamA.txt common_input/hotspots_v2_and_3d.txt common_input/oncokb_cancer_genes_list_from_API.json $(VERSION)/export/
+	cp $(TMP_DIR)/ensembl_biomart_canonical_transcripts_per_hgnc.txt $(TMP_DIR)/ensembl_biomart_transcripts_dog.json.gz common_input/pfamA.txt common_input/hotspots_v2_and_3d.txt common_input/oncokb_cancer_genes_list_from_API.json $(VERSION)/export/ && mv $(VERSION)/export/ensembl_biomart_transcripts_dog.json.gz $(VERSION)/export/ensembl_biomart_transcripts.json.gz
 
 .PHONY: all mouse dog
