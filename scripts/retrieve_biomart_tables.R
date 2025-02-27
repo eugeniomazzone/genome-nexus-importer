@@ -6,7 +6,7 @@
 library(biomaRt)
 
 args = commandArgs(trailingOnly=TRUE)
-args = c('canis_lupus_familiaris', 'cfa_ensembl104/input/', 'cfa')
+#args = c('canis_lupus_familiaris', 'cfa_ensembl104/input/', 'cfa')
 # set working dir to the correct genome/version input dir
 species <- args[1]
 path <- args[2]
@@ -33,10 +33,12 @@ ensembl <- useMart(biomart='ensembl', host=host_url, dataset=paste0(species, '_g
 # list datasets and attributes
 # listDatasets(ensembl)
 # listAttributes(ensembl)
+#prova <- getBM(attributes=c('ensembl_gene_id', 'ensembl_transcript_id','uniprot_gn_symbol','entrezgene_id', 'chromosome_name'), mart=ensembl)
 
 # if species is mouse, get IDs from MGI
 attributes <- c('ensembl_gene_id', 'ensembl_transcript_id', 'hgnc_symbol', 'hgnc_id')
 if (species=='mmusculus') attributes[3:4] <- c('mgi_symbol', 'mgi_id')
+if (species=='clfamiliaris') attributes[3:4] <- c('uniprot_gn_symbol', 'hgnc_id')
 
 genes <- getBM(attributes=attributes, mart=ensembl)
 pfam <- getBM(attributes=c('ensembl_gene_id', 'ensembl_transcript_id', 'external_gene_name', 'pfam', 'pfam_start', 'pfam_end'), mart=ensembl)
